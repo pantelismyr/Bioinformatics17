@@ -1,0 +1,53 @@
+
+Consensus tree program, version 3.696
+
+Species in order: 
+
+  1. GenID5
+  2. GenID4
+  3. GenID6
+  4. GenID3
+  5. GenID2
+  6. GenID1
+
+
+Sets included in the consensus tree
+
+Set (species in order)     How many times out of    1.00
+
+..****                      1.00
+...**.                      1.00
+..*..*                      0.50
+
+
+Sets NOT included in consensus tree:
+
+Set (species in order)     How many times out of    1.00
+
+..***.                      0.50
+
+
+Extended majority rule consensus tree
+
+CONSENSUS TREE:
+the numbers on the branches indicate the number
+of times the partition of the species into the two sets
+which are separated by that branch occurred
+among the trees, out of   1.00 trees
+(trees had fractional weights)
+
+                          +-------GenID1
+                  +--0.50-|
+                  |       +-------GenID6
+          +--1.00-|
+          |       |       +-------GenID2
+  +-------|       +--1.00-|
+  |       |               +-------GenID3
+  |       |
+  |       +-----------------------GenID4
+  |
+  +-------------------------------GenID5
+
+
+  remember: this is an unrooted tree!
+

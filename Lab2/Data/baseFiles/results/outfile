@@ -1,0 +1,27 @@
+
+   3 Populations
+
+Neighbor-Joining/UPGMA method version 3.696
+
+
+ Neighbor-joining method
+
+ Negative branch lengths allowed
+
+
+  +Hsapiens  
+  ! 
+  1Mus_muscul
+  ! 
+  +Fly       
+
+
+remember: this is an unrooted tree!
+
+Between        And            Length
+-------        ---            ------
+   1          Hsapiens        0.00000
+   1          Mus_muscul      0.01400
+   1          Fly             0.00000
+
+

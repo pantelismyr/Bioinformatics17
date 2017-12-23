@@ -1,0 +1,12 @@
+To get the given genomes we do the following:
+Browse in the homepage of NCBI -> Genomes (Top bar)-> Genome (Genome Sequences)->
+Browse by Organism (Using Genome) -> SEARCH FOR THE GIVEN GENOME ON THE SEARCH BAR ->
+Download sequences in FASTA format for genome
+
+(shortcut: https://www.ncbi.nlm.nih.gov/genome/browse/)
+
+Note that through this page we can bowse the list for all renomes for species but we need to 
+check that we actualy download the chromosomal genome sequences and NOT the plasmid etc.!
+
+Then we need to change the extention of the file to .fasta (or copy paste the sequence from
+the site (assuming we choose fasta format) and paste it in a plain text editor and save it as fasta)

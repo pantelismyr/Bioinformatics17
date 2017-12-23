@@ -1,0 +1,192 @@
+>>> BioMart
+
+#Trying Ensembl BioMart:
+
+-How many unique protein-coding genes are there then? 									22375 / 63967 Genes
+
+-How many of the protein coding genes have been assigned an ID by the Human Gene -Nomenclature Committee (HGNC)?	21579 / 63967 Genes
+
+-How many genes have an orthologue in mouse?										17733 / 63967 Genes
+
+
+#Retrieving results:
+
+-In what basic formats can you download your results?	HTML, TSV, CSV, and XLS
+
+-Figure out and explain what the top buttons, labeled "URL", "XML", and "Perl", are for.
+Answer:
+The buttons are there in order to choose in which format you want the queries to be shown. The possible formats are "URL", "XML", and "Perl”.
+
+#
+
+FASTA format is used. Unspliced transcripts produce one sequence per exon combination, including intros. Unspliced gene produces one sequence including both introns and all exons, as well as UTRs. Unspliced transcript differs from cDNA in cDNA not including introns, and cDNA giving one sequence containing all exons and UTRs, rather than one sequence per exon combination. If we want to work with coding region these 53 genes correspond to 237 sequences.
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+=========================	Specific Notes	=========================
+
+Commands:					Description:
+1.	.read [.sql file]				-Load the dataset
+2.	.mode column					-Each record shown on a separate line with data aligned in columns
+3.	.mode line					-Each record shown on its own line
+4.	.mode insert					-Show all of the insert commands used to create the table
+5.	.headers on					-Show headers for all the columns
+6.	select * from [table name];			-Prints out all the data contained in the table on the screen (Note the colon at the end)
+7.	.width [number] [number]			-Define the width of the 1st and 2nd columns (give a number and remove the brackets) (i.e $width 15 30 20)
+8.	.tables						-Display tables in the DB
+9.	.schema	[table name]				-See all the statements that were used to create the DB [if you want to see individual tables]
+10.	.show						-Show the current settings
+11.	drop table [table name]				-Delete table
+12.	delete from [table name] 			
+	where [name=‘name of the entry’]		-Delete a specific entry
+13.	count(X), count(*)/count() 			-Counts the number of times that X is not NULL in a group, Counts the number of rows in the group.
+
+
+
+For tables:
+
+!!Note: that numeric arguments in parentheses that following the type name (ex: "varying(10)") are ignored by SQLite - SQLite does not impose any length restrictions.
+
+
+A PRIMARY KEY is a column or group of columns used to identify the uniqueness of rows in a table. Each table has one and only one primary key.
+SQLite allows you to define primary key in two ways:
+
+1. If the primary key consists of one column, you use the PRIMARY KEY column constraint to define the primary key as follows:
+
+CREATE TABLE table_name(
+   column_1 NOT NULL INTEGER PRIMARY KEY,
+   ...
+);
+
+2. In case primary key consists of more than 2 columns, you use the PRIMARY KEY table constraint to define the primary as the following statement.
+
+CREATE TABLE table_name(
+   column_1 NOT NULL INTEGER,
+   column_2 NOT NULL INTEGER,
+   ...
+   PRIMARY KEY(column_1,column_2,...)
+);
+
+
+
+
+
+=========================	End of Notes		=========================
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+
+
+>>> Your own database
+
+1.What species are in the database?
+command: $select name from species;
+
+
+2.Add another species to the database: Sus scrofa!
+command: $insert into species values(‘SS’,’Sus scrofa’,’Wild Boar’);
+
+
+3.What proteins are longer than 1000 aa?
+command: $select accession from protein where length(sequence)>1000;
+
+
+4.What species are present in family NHR3? Give a full list with full species names using one SQL statement.
+command: $select name from species where abbrev in (select species from protein where accession in (select protein from familymembers where family='NHR3'));
+
+Remember: give a bigger .width value to see the full names
+
+
+5.How many proteins from each species are present in the database?
+command: $select name,common,count(species)  from protein,species where species.abbrev=protein.species group by name;
+
+
+6.How do you change the schema to add information about a protein's structure? You want to store the name for the structure (such as 2xkg, 5fvl or 6eny, resolution (1.6Å, 1.97Å, or similar), and method ("Solution NMR", "X-ray diffraction"). Remember that a protein may have several structures published. Make your suggested changes and add some example data that you make up!
+command:	CREATE TABLE pstructure (
+    			protein character,
+			structure name character,
+    			resolution real,
+ 	   		method character
+		);
+
+command: $insert into pstructure values('RORB_HUMAN', '5fvl', '1.97Å', 'Solution NMR');
+
+
+>>> Querying Ensembl
+
+To see all the available datasets:
+command: $mysql -u anonymous -h ensembldb.ensembl.org -P 3306
+
+
+-Assignment 1
+
+How many databases are available for cat, felis catus?
+command: $show databases like 'felis_catus%';
+
+Answer:
+We saw that there are 115 databases available
+
+
+-Assignment 2
+
+connect to latest homo sapiens database:
+command: $connect homo_sapiens_core_90_38;
+
+What tables are related to describing genes, transcripts, and exons. What information are these tables storing and how do the tables relate to each other?
+command: $show tables;    (to see all the tables in the dataset)
+	 $describe gene;
+	 $describe gene_archive;
+	 $describe gene_attrib;
+	 $describe transcript;                   (connects with gene id)
+	 $describe transcript_attrib;
+	 $describe transcript_intron_supporting_evidence;
+	 $describe transcript_supporting_feature;
+	 $describe exon;        
+	 $describe exon_transcript;   (connects with transcript id)
+
+
+-Assignment 3
+
+How many genes are registred for human? Make a breakdown based on the column "biotype" by using the GROUP BY directive.
+
+command: $select count(gene_id) from gene;
+result: 64661 are registered for human.
+
+In order to display all unique biotypes(groups):
+command: $select biotype from gene group by biotype;
+If you want to see the total number of occurrences of each biotype:
+command: $select biotype, count(gene_id) from gene group by biotype;
+
+
+-Assignment 4
+
+How many processed pseudogenes have a non-empty description string?
+
+2ways:
+1.
+command: $select biotype, count(description) from gene group by biotype;
+This will display two columns, biotype grouped by desciption total number. If you search manually by eye in the 1st column for the line pseudogene you will see the respective description number.
+2. more efficient
+command: $select biotype,count(description) from gene where biotype='pseudogene';
+This will display only the requested row, that is |pseudogene |   # of description| 
+
+Answer: 0 processed pseudogenes have a non-empty description string.
+
+
+-Assignment 5
+
+How many transcripts are associated with the two breast-cancer associated genes BRCA1 (ENSG00000012048) and BRCA2 (ENSG00000139618)? Your solution is supposed to be written as one SQL query. 
+command: select IFNULL(gene.stable_id,"Total") as gene_stable_id, count(transcript_id) as '# of transcript_id' from gene, transcript where transcript.gene_id=gene.gene_id and gene.stable_id in ('ENSG00000012048','ENSG00000139618') group by gene.stable_id ASC WITH ROLLUP;
+
+Answer: +-----------------+--------------------+
+	| gene_stable_id  | # of transcript_id |
+	+-----------------+--------------------+
+	| ENSG00000012048 |                 30 |
+	| ENSG00000139618 |                  7 |
+	| Total           |                 37 |
+	+-----------------+--------------------+
+
+
+
+
+
+
+
+
